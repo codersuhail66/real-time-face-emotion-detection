@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Face + Emotion Detection</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f2f2f2; }
+    video, canvas { border: 2px solid #333; border-radius: 10px; margin: 10px; }
+    #status { margin-top: 15px; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Face Recognition + Emotion Detection</h1>
+
+  <video id="video" width="640" height="480" autoplay></video>
+  <canvas id="canvas" width="640" height="480"></canvas>
+  <div id="status">Starting camera...</div>
+
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const statusDiv = document.getElementById("status");
+
+    // Request access to webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; statusDiv.innerText = "Camera started"; })
+      .catch(err => { statusDiv.innerText = "Camera error: " + err; });
+
+    // Send frames to Flask every 1s
+    setInterval(() => {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      let dataUrl = canvas.toDataURL("image/jpeg");
+
+      fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataUrl })
+      })
+      .then(res => res.json())
+      .then(data => {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        if (data.faces) {
+          data.faces.forEach(face => {
+            let [x, y, w, h] = face.box;
+            ctx.strokeStyle = "lime";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, w, h);
+
+            ctx.fillStyle = "yellow";
+            ctx.font = "18px Arial";
+            ctx.fillText(face.emotion, x, y - 10);
+          });
+        }
+
+        if (data.error) {
+          statusDiv.innerText = "Error: " + data.error;
+        }
+      })
+      .catch(err => {
+        statusDiv.innerText = "Fetch error: " + err;
+      });
+
+    }, 1000);
+  </script>
+</body>
+</html>

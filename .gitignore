@@ -1,0 +1,30 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+.env
+*.env
+.DS_Store
+
+# Virtual environments
+venv/
+backend/venv/
+
+# ---- Flask ----
+instance/
+*.pid
+
+# ---- Node / React ----
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# ---- VS Code ----
+.vscode/
+
+# ---- OS files ----
+Thu
