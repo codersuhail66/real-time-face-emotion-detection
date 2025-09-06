@@ -1,4 +1,4 @@
-# Real-Time Face Recognition & Emotion Detection using AI for Computer-Human Interaction
+# Real-Time Face Recognition & Emotion Detection 
 
 A real-time AI-powered application that uses **Flask (Python)** as backend and **React.js** as frontend to perform face recognition and detect emotions like Happy, Sad, Angry, Neutral, and Surprise.  
 
