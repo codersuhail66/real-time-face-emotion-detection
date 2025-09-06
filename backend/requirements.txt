@@ -1,8 +1,6 @@
-flask
+Flask
 flask-cors
 opencv-python
-tensorflow
-keras
 fer
+moviepy
 numpy
-gunicorn
